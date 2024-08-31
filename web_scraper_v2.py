@@ -1,13 +1,8 @@
-import os
-import json
+import os, json, requests, logging, re
 from dataclasses import dataclass
-import requests
 from bs4 import BeautifulSoup
-import re
-import logging
 
-__numberOfArticles = 10000
-
+__numberOfArticles = 20000
 
 @dataclass
 class Article:
@@ -25,7 +20,6 @@ class Article:
     word_count: int
     description: str
     classes: list
-
 
 class SitemapParser:
     def __init__(self, sitemap_url):
@@ -50,7 +44,6 @@ class SitemapParser:
         except requests.RequestException as e:
             logging.error(f"Error fetching {sitemap_url}: {e}")
             return []
-
 
 class ArticleScraper:
     def __init__(self, url):
@@ -149,7 +142,6 @@ class ArticleScraper:
             logging.error(f"Error scraping article {self.url}: {e}")
             return None
 
-
 class FileUtility:
     def __init__(self, output_dir):
         self.output_dir = output_dir
@@ -165,14 +157,13 @@ class FileUtility:
                 indent=4,
             )
 
-
 def main():
     # Set up logging
     logging.basicConfig(level=logging.INFO, format="%(message)s", encoding="utf-8")
     logger = logging.getLogger()
 
     sitemap_parser = SitemapParser("https://www.almayadeen.net/sitemaps/all.xml")
-    file_utility = FileUtility(output_dir="output")
+    file_utility = FileUtility(output_dir="dbJSON")
     monthly_sitemaps = sitemap_parser.get_monthly_sitemap()
     logger.info(f"Found {len(monthly_sitemaps)} monthly sitemaps.")
     total_articles_scraped = 0
@@ -187,7 +178,7 @@ def main():
         for index, url in enumerate(article_urls, start=1):
             if total_articles_scraped >= __numberOfArticles:
                 break
-            logger.info(f"Scraping article {index}: {url}")
+            logger.info(f"Scraping article {index}")
             scraper = ArticleScraper(url)
             article = scraper.scrape()
             if article is not None:
@@ -197,8 +188,10 @@ def main():
         year, month = sitemap.split("/")[-1].split("-")[1:3]
         file_utility.save_to_json(articles, year, month)
         logger.info(f"Saved {len(articles)} articles for {year}-{month}")
-    logger.info(f"Total articles scraped: {total_articles_scraped}")
 
+    # Print the total number of articles scraped to the console
+    print(f"Total articles scraped: {total_articles_scraped}")
+    logger.info(f"Total articles scraped: {total_articles_scraped}")
 
 if __name__ == "__main__":
     main()
