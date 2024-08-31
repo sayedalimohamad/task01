@@ -1,3 +1,50 @@
+# Article Scraper version 2
+
+## Overview
+
+This code is designed to scrape and store articles from a website by processing its sitemap. It extracts relevant details from each article, such as the title, keywords, author, and content, and then saves this data into a JSON file. The code is structured with multiple classes to handle different tasks, ensuring a modular and organized approach.
+
+## Key Components and Benefits
+
+### Article Class (`Article`)
+
+- **Purpose**: Represents the structure of an article with attributes like URL, title, keywords, content, etc.
+- **Benefit**: Provides a standardized format to store and manage the scraped article data.
+
+### Sitemap Parser (`SitemapParser`)
+
+- **Purpose**: Retrieves URLs from the website's sitemap.
+- **Benefit**: Efficiently identifies and collects all article URLs from the sitemap, allowing the scraper to process a large number of articles systematically.
+
+### Article Scraper (`ArticleScraper`)
+
+- **Purpose**: Extracts detailed information from each article page, such as the title, publication date, and full text.
+- **Benefit**: Automates the extraction of key details from articles, including handling edge cases where certain elements might be missing, thus improving the reliability of the scraping process.
+
+### File Utility (`FileUtility`)
+
+- **Purpose**: Handles the loading of existing articles and saving new articles into JSON files.
+- **Benefit**: Ensures that scraped data is consistently saved and organized, avoiding duplication and enabling easy resumption of the scraping process if interrupted.
+
+### Main Functionality (`main`)
+
+- **Purpose**: Orchestrates the overall scraping process by iterating through the sitemap, scraping each article, and saving the data.
+- **Benefit**: Provides a complete end-to-end solution for large-scale article scraping, with logging and checks to manage the number of articles processed and avoid unnecessary work.
+
+## Additional Features
+
+- **Error Handling**: The code includes robust error handling to manage network issues and missing data gracefully, ensuring the scraper can continue operating even when encountering issues.
+
+- **90% Threshold Check**: Before scraping a month’s worth of articles, the program checks if 90% or more articles have already been scraped, skipping further processing if this is the case, thus saving time and resources.
+
+- **Resume Functionality**: If the program is interrupted, it can resume from where it left off, processing only the remaining articles, ensuring efficient use of resources.
+
+## Conclusion
+
+This code provides an efficient and reliable way to scrape a large number of articles from a website. By modularizing tasks like sitemap parsing, article scraping, and file handling, it ensures that each component is easy to maintain, update, and extend. The code's built-in error handling and optimization strategies, such as skipping already processed articles, make it a powerful tool for large-scale web scraping projects.
+
+---
+
 # Webscraper
 ## Al Mayadeen Article Scraper
 
