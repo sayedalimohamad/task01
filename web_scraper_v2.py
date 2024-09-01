@@ -56,78 +56,76 @@ class ArticleScraper:
         words = re.findall(r"\w+", text)
         return len(words)
 
+    def _get_video_duration_from_play(self, soup):
+        """
+        Attempt to find the video duration by simulating a play button click.
+        """
+        try:
+            duration_div = soup.find("div", class_="ytp-cued-thumbnail-overlay-image")
+            if duration_div:
+                play_button = soup.find(
+                    "button",
+                    class_="ytp-large-play-button ytp-button ytp-large-play-button-red-bg",
+                )
+                if play_button:
+                    duration_span = soup.find("span", class_="ytp-time-duration")
+                    if duration_span:
+                        return duration_span.get_text().strip()
+            return None
+        except Exception as e:
+            logging.error(f"Error getting video duration by playing video: {e}")
+            return None
+
     def scrape(self):
         try:
             response = requests.get(self.url, timeout=10)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, "lxml")
-            title_tag = soup.find("h2")
-            title = title_tag.get_text().replace("\n", " ") if title_tag else None
-            meta_keywords = soup.find("meta", attrs={"name": "keywords"})
-            keywords = (
-                meta_keywords.get("content").replace("\n", " ").split(",")
-                if meta_keywords
-                else None
-            )
-            postid_meta_tag = soup.find("meta", attrs={"name": "postid"})
-            post_id = (
-                postid_meta_tag["content"].replace("\n", " ")
-                if postid_meta_tag
-                else None
-            )
-            thumbnail_tag = soup.find("meta", property="og:image")
-            thumbnail = (
-                thumbnail_tag["content"].replace("\n", " ") if thumbnail_tag else None
-            )
-            published_time_tag = soup.find("meta", property="article:published_time")
-            published_time = (
-                published_time_tag["content"].replace("\n", " ")
-                if published_time_tag
-                else None
-            )
-            modified_time_meta_tag = soup.find(
-                "meta", attrs={"property": "article:modified_time"}
-            )
-            modified_time = (
-                modified_time_meta_tag["content"].replace("\n", " ")
-                if modified_time_meta_tag
-                else None
-            )
-            author_meta = soup.find("meta", attrs={"name": "author"})
-            author = author_meta["content"].replace("\n", " ") if author_meta else None
+            tawsiyat_metadata = soup.find("script", {"id": "tawsiyat-metadata"})
+            if tawsiyat_metadata:
+                try:
+                    tawsiyat_json = json.loads(tawsiyat_metadata.string)
+                    post_id = tawsiyat_json.get("postid", "No post ID found")
+                    title = tawsiyat_json.get("title", "No title found")
+                    url = tawsiyat_json.get("url", "No URL found")
+                    keywords = tawsiyat_json.get("keywords", "No keywords found").split(
+                        ","
+                    )
+                    thumbnail = tawsiyat_json.get("thumbnail", "No thumbnail found")
+                    word_count = tawsiyat_json.get("word_count", 0)
+                    lang = tawsiyat_json.get("lang", "No language found")
+                    published_time = tawsiyat_json.get(
+                        "published_time", "No published time found"
+                    )
+                    last_updated = tawsiyat_json.get(
+                        "last_updated", "No last updated time found"
+                    )
+                    description = tawsiyat_json.get(
+                        "description", "No description found"
+                    )
+                    author = tawsiyat_json.get("author", "No author found")
+                    classes = tawsiyat_json.get("classes", "No classes found")
+                except json.JSONDecodeError:
+                    logging.error("Error parsing Tawsiyat metadata")
+                    return None
+            else:
+                logging.error("No tawsiyat-metadata found")
+                return None
             paragraphs = soup.find_all("p")
             full_text = (
                 " ".join([p.get_text().replace("\n", " ") for p in paragraphs])
                 if paragraphs
                 else None
             )
-            video_meta = soup.find("meta", attrs={"property": "og:video_duration"})
-            video_duration = (
-                video_meta["content"].replace("\n", " ") if video_meta else None
-            )
-            language_tag = soup.find("html")
-            lang = language_tag.get("lang").replace("\n", " ") if language_tag else None
-            word_count = self._calculate_word_count(full_text) if full_text else None
-            meta_description = soup.find("meta", attrs={"name": "description"})
-            description = (
-                meta_description["content"].replace("\n", " ")
-                if meta_description
-                else None
-            )
-            classes_content = soup.find("script", attrs={"type": "text/tawsiyat"})
-            classes = (
-                json.loads(classes_content.string)["classes"]
-                if classes_content
-                else None
-            )
+            video_duration = self._get_video_duration_from_play(soup)
             return Article(
-                url=self.url,
+                url=url,
                 post_id=post_id,
                 title=title,
                 keywords=keywords,
                 thumbnail=thumbnail,
                 published_time=published_time,
-                last_updated=modified_time,
+                last_updated=last_updated,
                 author=author,
                 full_text=full_text,
                 video_duration=video_duration,
@@ -207,7 +205,6 @@ def main():
                 total_articles_scraped += 1
         logger.info(f"Saved articles for {year}-{month}")
     logger.info(f"Total articles scraped: {total_articles_scraped}")
-    print(f"Total articles scraped: {total_articles_scraped}")
 
 
 if __name__ == "__main__":
