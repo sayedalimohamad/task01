@@ -1,6 +1,7 @@
 # Article Scraper version 2 :
 
-## Please remember the following: `"This is the most recent and final version you should use."`
+## Please remember the following: 
+`"This is the most recent and final version you should use."`
 
 ## Overview
 
