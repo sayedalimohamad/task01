@@ -1,8 +1,15 @@
-# Article Scraper version 2
+# Article Scraper version 2 :
+
+## Please remember the following: `"This is the most recent and final version you should use."`
 
 ## Overview
 
 This code is designed to scrape and store articles from a website by processing its sitemap. It extracts relevant details from each article, such as the title, keywords, author, and content, and then saves this data into a JSON file. The code is structured with multiple classes to handle different tasks, ensuring a modular and organized approach.
+
+### Author
+
+**Name:** Mohamad Sayed Ali  
+**ID:** 10119295
 
 ## Key Components and Benefits
 
@@ -46,16 +53,12 @@ This code provides an efficient and reliable way to scrape a large number of art
 ---
 
 # Webscraper
+
 ## Al Mayadeen Article Scraper
 
 ### Overview
 
 This Python script scrapes articles from the Al Mayadeen website and saves the data to a JSON file. The script fetches all URLs from the sitemap, then retrieves the article URLs from each sitemap URL. It then scrapes the article data from each article URL and saves it to a JSON file. The script is designed to scrape 10,000 articles as required.
-
-### Author
-
-**Name:** Mohamad Sayed Ali  
-**ID:** 10119295
 
 ### Features
 
@@ -98,20 +101,25 @@ The script also prints the number of articles collected so far to keep track of 
 To run the script, simply execute it in your Python environment. The script will print the scraped data for each article to the console and save all the data in the `articles.json` file.
 
 **Example command to run the script:**
+
 ```bash
 python web_scraper.py
 
 ```
 
 ## Customization
-Change the Number of Articles: Modify the value of __numberOfUrls to scrape a different number of articles.
-`__numberOfUrls = 10000  # Change to the desired number of articles to scrape`
+
+Change the Number of Articles: Modify the value of **numberOfUrls to scrape a different number of articles.
+`**numberOfUrls = 10000 # Change to the desired number of articles to scrape`
 
 ## Testing
+
 For fast testing and quick output, a Jupyter Notebook file named `testUnit.ipynb` is provided. This notebook allows you to test the script in a more interactive environment, ideal for rapid development and debugging.
 
 ## Output
+
 The output file articles.json will be saved in the same directory as the script. It contains the JSON representation of the scraped article data, formatted with indentation for readability.
 
 ## Error Handling
+
 The script includes basic error handling for HTTP requests. If an error occurs during the fetching of URLs or article content, an error message will be returned and printed to the console.

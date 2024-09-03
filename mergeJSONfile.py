@@ -17,7 +17,7 @@ for filename in os.listdir(folder_path):
             print(f"Error decoding JSON in file {file_path}: {e}")
         except UnicodeDecodeError as e:
             print(f"Error decoding file {file_path}: {e}")
-output_file = f"articles_{total_elements}.json"
+output_file = f"articles.json"
 with open(output_file, "w", encoding="utf-8") as file:
     json.dump(merged_data, file, ensure_ascii=False, indent=4)
 print(
